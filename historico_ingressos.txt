@@ -1,0 +1,54 @@
+========================================
+Data/Hora: 23/11/2025 17:55:19
+Cliente: Chris (Estudante)
+Filme: Wicked: Parte 2
+Sala: Sala 1 | Assento: 1
+Sessão: 19:30
+Valor pago: R$ 22,50
+========================================
+
+========================================
+Data/Hora: 23/11/2025 18:31:07
+Cliente: Chris (Estudante)
+Filme: Wicked: Parte 2
+Sala: Sala 1 | Assento: 2
+Sessão: 19:30
+Valor pago: R$ 22,50
+========================================
+
+========================================
+Data/Hora: 23/11/2025 18:46:06
+Cliente: Chris (Estudante)
+Filme: Truque de mestre - O 3º ato
+Sala: Sala 1 | Assento: 2
+Sessão: 19:30
+Valor pago: R$ 22,50
+========================================
+
+========================================
+Data/Hora: 25/11/2025 11:35:52
+Cliente: Chris (Comum)
+Filme: O Hobbit: A Desolação de Smaug
+Sala: Sala 3 | Assento: 3
+Sessão: 19:30
+Valor pago: R$ 45,00
+========================================
+
+========================================
+Data/Hora: 25/11/2025 14:49:20
+Cliente: Chris (Estudante)
+Filme: Truque de mestre - O 3º ato
+Sala: Sala 1 | Assento: 3
+Sessão: 19:30
+Valor pago: R$ 22,50
+========================================
+
+========================================
+Data/Hora: 23/03/2026 20:08:03
+Cliente: Chris (Estudante)
+Filme: Zootopia 2
+Sala: Sala 4 | Assento: 1
+Sessão: 15h30
+Valor pago: R$ 22,50
+========================================
+

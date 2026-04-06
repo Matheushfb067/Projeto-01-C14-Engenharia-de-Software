@@ -166,6 +166,6 @@ Valor pago: R$ 22.50
 
 ## **👨‍💻 Desenvolvido por:**
 
-#### Jhonata Claudio | Julia Caputo | Luana Roland | Matheus Henrique | Yasmin Vasconcelos
+#### Giuliana Batistella | Matheus Henrique | Vitoria Cássia | Warley Ruivo
 
 ---

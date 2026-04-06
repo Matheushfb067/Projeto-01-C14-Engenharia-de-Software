@@ -7,7 +7,6 @@ import cinema.modelo.Filme;
 import cinema.modelo.Sala;
 import cinema.modelo.Sessao;
 import cinema.modelo.Cliente;
-import cinema.concorrencia.TentativaDeCompra;
 import cinema.pagamento.*;
 import cinema.modelo.ClienteComum;
 import cinema.modelo.ClienteEstudante;
@@ -61,8 +60,7 @@ public class Main {
             System.out.println("6 - Selecione o Tipo de Cliente ");
             System.out.println("7 - Comprar Ingressos");
             System.out.println("8 - Cancelar Reserva");
-            System.out.println("9 - Concorrencia de Compras (THREADS)");
-            System.out.println("10 - Ver Histórico de Compras");
+            System.out.println("9 - Ver Histórico de Compras");
             System.out.println("0 - Sair");
             System.out.println("==========================================");
 
@@ -395,49 +393,6 @@ public class Main {
                     System.out.println();
                     break;
                 case 9:
-                    /*Uma Thread consiste em criar linhas de execução em paralelo dentro do mesmo código
-
-                    */
-
-                    System.out.println("===== SIMULANDO CONCORRÊNCIA DE COMPRAS =====");
-
-                    // Definição da sala e assento de conflito entre os clientes alice, bob e carol.
-                    Sala salaTeste = salas[0]; //Sala 1
-                    int assentoConflito = 5;
-
-                    System.out.println("Clientes tentando reservar o Assento " + assentoConflito + " na Sala " + salaTeste.getIdSala());
-
-                    //Criação das tarefas - objetos que irão executar em conflito
-                    Runnable tarefa1 = new TentativaDeCompra("Cliente Alice", salaTeste, assentoConflito);
-                    Runnable tarefa2 = new TentativaDeCompra("Cliente Bob", salaTeste, assentoConflito);
-                    Runnable tarefa3 = new TentativaDeCompra("Cliente Carol", salaTeste, assentoConflito);
-
-                    // Cria as Threads e associa as tarefas a elas
-                    Thread t1 = new Thread(tarefa1);//objetos que implementam a interface Runnable são as instâncias da classe Cinema.Concorrencia.TentativaDeCompra
-                    Thread t2 = new Thread(tarefa2);
-                    Thread t3 = new Thread(tarefa3);
-
-                    //start() é o que realmente cria a thread no sistema.
-                    t1.start();
-                    t2.start();
-                    t3.start();
-
-                    /*Ele força a thread principal a esperar que a thread t1 (Alice) termine sua execução antes de
-                    continuar com o código seguinte*/
-                    try {
-                        t1.join(); // Espera t1 finalizar
-                        t2.join(); // Espera t2 finalizar
-                        t3.join(); // Espera t3 finalizar
-                    } catch (InterruptedException e) {
-                        System.out.println("Simulação de thread interrompida.");
-                        Thread.currentThread().interrupt();
-                    }
-
-                    System.out.println("--- Concorrência Finalizada ---");
-                    salaTeste.imprimirMapa(); // Mostra o mapa final da sala
-                    System.out.println("=============================================");
-                    break;
-                case 10:
                     //Ver Historico de Arquivo:
                     GerenciadorDeArquivos.lerHistorico();
                     System.out.println();

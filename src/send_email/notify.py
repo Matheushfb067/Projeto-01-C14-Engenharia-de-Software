@@ -19,8 +19,8 @@ if not all([dest, user, password]):
 status = sys.argv[1].lower() if len(sys.argv) > 1 else "finalizado"
 
 # 3. Personaliza a mensagem baseada no status
-emoji = "✅" if status == "success" else "❌"
-subject = f"{emoji} Status do Pipeline: {status.upper()}"
+label = "OK" if status == "success" else "ERRO"
+subject = f"[{label}] Status do Pipeline: {status.upper()}"
 body = f"O pipeline do Sistema de Filmes foi executado.\nResultado: {status.upper()}"
 
 msg = MIMEText(body)

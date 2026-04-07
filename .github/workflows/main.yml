@@ -1,0 +1,75 @@
+name: Pipeline CI/CD Grupo C14
+
+on:
+  push:
+    branches: [ main ] # Executa sempre que houver um push na branch principal
+
+jobs:
+  # JOB 1: Execução de Testes Unitários
+  tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Run Unit Tests
+        run: mvn test
+        
+      - name: Save Test Report Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-testes
+          path: target/surefire-reports/
+
+  # JOB 2: Build / Empacotamento (Roda em PARALELO com os testes)
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          
+      - name: Build with Maven
+        run: mvn package -DskipTests
+        
+      - name: Save Jar Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pacote-projeto-jar
+          path: target/*.jar
+
+  # JOB 3: Deploy e Notificação (Só ocorre após sucesso de Testes e Build)
+  deploy-and-notify:
+    name: Deploy and Notify
+    needs: [tests, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Stage - Deploy
+        run: echo "Realizando deploy automático dos artefatos aprovados..."
+
+      - name: Enviar Notificação
+        run: mvn exec:java -Dexec.mainClass="cinema.notification.EmailNotification" -Dexec.args="${{ job.status }}"
+        env:
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}

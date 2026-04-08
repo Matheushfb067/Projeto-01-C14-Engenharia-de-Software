@@ -36,38 +36,78 @@
 ```
 CinePOO/
 │
+├── .github/
+│   └── workflows/
+│       └── main.yml               # Pipeline CI/CD (Testes, Build e Deploy)
+│
 ├── src/
 │   └── cinema/
 │       ├── concorrencia/          # Implementação de threads e concorrência
 │       │   └── TentativaDeCompra.java
 │       │
-│       ├── main/                   # Classe principal e gerenciamento de arquivos
+│       ├── main/                  # Classe principal e gerenciamento de arquivos
 │       │   ├── Main.java
-│       │   └── GerenciadorArquivos.java Leitura/Escrita de histórico
+│       │   └── GerenciadorArquivos.java
 │       │
-│       ├── modelo/                 # Classes de domínio (entidades)
-│       │   ├── Cliente.java        # Superclasse com herança
-│       │   ├── ClienteComum.java   # Subclasse - sem desconto
-│       │   ├── ClienteEstudante.java  # Subclasse - 50% desconto
-│       │   ├── ClienteIdoso.java   # Subclasse - 50% desconto
+│       ├── modelo/                # Classes de domínio (entidades)
+│       │   ├── Cliente.java
+│       │   ├── ClienteComum.java
+│       │   ├── ClienteEstudante.java
+│       │   ├── ClienteIdoso.java
 │       │   ├── Filme.java
 │       │   ├── Sala.java
 │       │   └── Sessao.java
 │       │
-│       └── pagamento/              # Sistema de pagamento (interfaces e implementações)
-│           ├── Cartao.java         # Interface
+│       ├── notification/          # Sistema de notificação por e-mail
+│       │   └── EmailNotification.java
+│       │
+│       └── pagamento/             # Sistema de pagamento (interfaces e implementações)
+│           ├── Cartao.java
 │           ├── CartaoCredito.java
 │           ├── CartaoDebito.java
-│           ├── Pagamento.java      # Interface
+│           ├── Pagamento.java
 │           ├── PagamentoCartao.java
 │           ├── PagamentoDinheiro.java
 │           └── PagamentoPix.java
 │
-├── historico_ingressos.txt         # [NOVO] Arquivo gerado automaticamente
+├── historico_ingressos.txt        # Gerado automaticamente pela aplicação
 ├── .gitignore
 ├── CinePOO.iml
 └── README.md
 ```
+
+---
+
+## 🚀 Pipeline CI/CD
+
+O projeto conta com um pipeline automatizado via **GitHub Actions** (`.github/workflows/main.yml`) que é executado a cada `push` na branch `main`.
+
+### Jobs do Pipeline
+
+| Job | Descrição | Depende de |
+|-----|-----------|------------|
+| `tests` | Executa os testes unitários com Maven e salva o relatório | — |
+| `build` | Empacota o projeto gerando o `.jar` | — |
+| `deploy-and-notify` | Realiza o deploy e envia notificação por e-mail | `tests` + `build` |
+
+> Os jobs `tests` e `build` rodam em **paralelo**. O `deploy-and-notify` só é executado após ambos serem concluídos com sucesso.
+
+### Artefatos Gerados
+
+Após cada execução bem-sucedida do pipeline, dois artefatos ficam disponíveis na aba **Actions** do GitHub:
+
+- 📦 **`pacote-projeto-jar`** — o arquivo `.jar` executável gerado pelo Maven
+- 📋 **`relatorio-testes`** — relatório HTML/XML dos testes unitários (Surefire)
+
+### Variáveis de Ambiente (Secrets)
+
+Para o job de notificação funcionar, configure os seguintes **Secrets** no repositório (`Settings > Secrets and variables > Actions`):
+
+| Secret | Descrição |
+|--------|-----------|
+| `EMAIL_TO` | E-mail de destino da notificação |
+| `SMTP_USER` | Usuário do servidor SMTP |
+| `SMTP_PASSWORD` | Senha do servidor SMTP |
 
 ---
 
@@ -113,7 +153,9 @@ CinePOO/
 
 ## ⚡ Tecnologias Utilizadas
 
-- Java 11+
+- Java 17
+- Maven (build e gerenciamento de dependências)
+- GitHub Actions (CI/CD)
 - Threads e sincronização (`synchronized`)
 - Programação Orientada a Objetos (POO)
 - Manipulação de Arquivos (I/O) com `java.io.*`
@@ -156,11 +198,14 @@ Valor pago: R$ 22.50
 
 ## 🎯 Principais Melhorias Implementadas
 
-✅ **Sistema de Herança** - Hierarquia de classes Cliente com polimorfismo  
-✅ **Descontos Automáticos** - Cálculo baseado no tipo de cliente  
-✅ **Persistência de Dados** - Histórico permanente de todas as compras  
-✅ **Leitura/Escrita de Arquivos** - Implementação completa de I/O  
+✅ **Sistema de Herança** - Hierarquia de classes Cliente com polimorfismo
+✅ **Descontos Automáticos** - Cálculo baseado no tipo de cliente
+✅ **Persistência de Dados** - Histórico permanente de todas as compras
+✅ **Leitura/Escrita de Arquivos** - Implementação completa de I/O
 ✅ **Tratamento de Exceções** - Validações robustas em todo o sistema
+✅ **Pipeline CI/CD** - Testes, build e deploy automatizados via GitHub Actions
+✅ **Artefatos Gerados** - `.jar` e relatório de testes salvos automaticamente no GitHub
+✅ **Notificação Automática** - E-mail enviado ao fim de cada pipeline
 
 ---
 

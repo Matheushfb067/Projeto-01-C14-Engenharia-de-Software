@@ -2,10 +2,10 @@ name: Pipeline CI/CD Grupo C14
 
 on:
   push:
-    branches: [ main ] # Executa sempre que houver um push na branch principal
+    branches: [ main ]
 
 jobs:
-  # JOB 1: Execução de Testes Unitários
+  # JOB 1: Testes Unitários
   tests:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
           name: relatorio-testes
           path: target/surefire-reports/
 
-  # JOB 2: Build / Empacotamento (Roda em PARALELO com os testes)
+  # JOB 2: Build em Paralelo
   build:
     name: Build Project
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
           name: pacote-projeto-jar
           path: target/*.jar
 
-  # JOB  3: Deploy e Notificação (Só ocorre após sucesso de Testes e Build)
+  # JOB 3: Deploy e Notificação (Depende dos outros dois)
   deploy-and-notify:
     name: Deploy and Notify
     needs: [tests, build]

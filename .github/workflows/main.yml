@@ -50,7 +50,7 @@ jobs:
           name: pacote-projeto-jar
           path: target/*.jar
 
-  # JOB 3: Deploy e Notificação (Só ocorre após sucesso de Testes e Build)
+  # JOB  3: Deploy e Notificação (Só ocorre após sucesso de Testes e Build)
   deploy-and-notify:
     name: Deploy and Notify
     needs: [tests, build]

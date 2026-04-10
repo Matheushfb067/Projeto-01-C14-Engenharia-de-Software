@@ -70,13 +70,13 @@ jobs:
         run: echo "Realizando deploy automático dos artefatos aprovados..."
 
       - name: Enviar Notificação
-        # Usamos uma expressão ternária para passar o status real dos jobs anteriores
         run: |
           STATUS="success"
           if [ "${{ needs.tests.result }}" != "success" ] || [ "${{ needs.build.result }}" != "success" ]; then
             STATUS="failure"
           fi
-          mvn exec:java -Dexec.mainClass="cinema.notification.EmailNotification" -Dexec.args="$STATUS"
+          # 'compile' garante que o Java build as classes antes de tentar o 'exec'
+          mvn compile exec:java -Dexec.mainClass="cinema.notification.EmailNotification" -Dexec.args="$STATUS" -e
         env:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           SMTP_USER: ${{ secrets.SMTP_USER }}

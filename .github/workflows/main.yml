@@ -5,22 +5,25 @@ on:
     branches: [ main ]
 
 jobs:
+
+
   # JOB 1: Testes Unitários
+
   tests:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Java JDK
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          
+
       - name: Run Unit Tests
         run: mvn test
-        
+
       - name: Save Test Report Artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -28,33 +31,38 @@ jobs:
           name: relatorio-testes
           path: target/surefire-reports/
 
-  # JOB 2: Build em Paralelo
+
+  # JOB 2: Build em Paralelo (roda junto com testes)
+
   build:
     name: Build Project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Java JDK
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          
+
       - name: Build with Maven
         run: mvn package -DskipTests
-        
-      - name: Save Jar Artifact
+
+      - name: Save JAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: pacote-projeto-jar
           path: target/*.jar
 
-  # JOB 3: Deploy e Notificação (Depende dos outros dois)
+  # ─────────────────────────────────────────────
+  # JOB 3: Deploy e Notificação
+  # Só roda após testes e build finalizarem
+  # ─────────────────────────────────────────────
   deploy-and-notify:
     name: Deploy and Notify
-    needs: [tests, build]
-    if: always() # Garante que o e-mail seja enviado mesmo se o teste ou build falhar
+    needs: [ tests, build ]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,17 +73,33 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Stage - Deploy
+      # Baixa o JAR gerado no job de build
+      - name: Download JAR gerado no build
         if: needs.tests.result == 'success' && needs.build.result == 'success'
-        run: echo "Realizando deploy automático dos artefatos aprovados..."
+        uses: actions/download-artifact@v4
+        with:
+          name: pacote-projeto-jar
+          path: target/
 
-      - name: Enviar Notificação
+      # Publica o JAR no GitHub Releases apenas se testes e build passaram
+      - name: Deploy - Publicar JAR no GitHub Releases
+        if: needs.tests.result == 'success' && needs.build.result == 'success'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: "Release v${{ github.run_number }}"
+          body: "Deploy automático gerado pelo pipeline CI/CD — testes e build aprovados."
+          files: target/*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Envia e-mail com o resultado do pipeline
+      - name: Enviar Notificação por E-mail
         run: |
           STATUS="success"
           if [ "${{ needs.tests.result }}" != "success" ] || [ "${{ needs.build.result }}" != "success" ]; then
             STATUS="failure"
           fi
-          # 'compile' garante que o Java build as classes antes de tentar o 'exec'
           mvn compile exec:java -Dexec.mainClass="cinema.notification.EmailNotification" -Dexec.args="$STATUS" -e
         env:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}

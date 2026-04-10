@@ -26,12 +26,15 @@ public class EmailNotification {
         // 3. Personaliza a mensagem baseada no status
         String label = status.equals("success") ? "OK" : "ERRO";
         String subject = "[" + label + "] Status do Pipeline: " + status.toUpperCase();
-        String body = "O pipeline do Sistema de Filmes foi executado.\nResultado: " + status.toUpperCase();
+        String body = String.format("O pipeline do CinePOO foi concluído.\nStatus Final: %s\nData/Hora: %s", 
+                        status.toUpperCase(), java.time.LocalDateTime.now());
 
         // Configurações do servidor SMTP do Gmail
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.required", "true");
+        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
 

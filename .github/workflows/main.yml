@@ -54,6 +54,7 @@ jobs:
   deploy-and-notify:
     name: Deploy and Notify
     needs: [tests, build]
+    if: always() # Garante que o e-mail seja enviado mesmo se o teste ou build falhar
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,10 +66,17 @@ jobs:
           distribution: 'temurin'
 
       - name: Stage - Deploy
+        if: needs.tests.result == 'success' && needs.build.result == 'success'
         run: echo "Realizando deploy automático dos artefatos aprovados..."
 
       - name: Enviar Notificação
-        run: mvn exec:java -Dexec.mainClass="cinema.notification.EmailNotification" -Dexec.args="${{ job.status }}"
+        # Usamos uma expressão ternária para passar o status real dos jobs anteriores
+        run: |
+          STATUS="success"
+          if [ "${{ needs.tests.result }}" != "success" ] || [ "${{ needs.build.result }}" != "success" ]; then
+            STATUS="failure"
+          fi
+          mvn exec:java -Dexec.mainClass="cinema.notification.EmailNotification" -Dexec.args="$STATUS"
         env:
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           SMTP_USER: ${{ secrets.SMTP_USER }}
